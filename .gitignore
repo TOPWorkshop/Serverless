@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Serverless Framework
-.severless
+.serverless
+.webpack
 
 ### Node template
 # Logs

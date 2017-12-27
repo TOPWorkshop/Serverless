@@ -1,0 +1,51 @@
+service: users
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-west-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        # - dynamodb:PutItem
+      Resource:
+        - { "Fn::GetAtt": ["TOPWSUsers", "Arn" ] }
+  environment:
+    TABLE_USERS: { "Ref": "TOPWSUsers" }
+
+functions:
+  list:
+    handler: users/index.list
+    events:
+      - http:
+          path: users
+          method: get
+  vote:
+    handler: users/index.vote
+    events:
+      - http:
+          path: users/{userId}/vote
+          method: put
+          request:
+            parameters:
+              paths:
+                userId: true
+
+resources:
+  Resources:
+    TOPWSUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
