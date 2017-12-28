@@ -5,6 +5,7 @@ plugins:
   - serverless-finch
 
 custom:
+  webpack: ./config/webpack/serverless.js
   client:
     bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
     distributionFolder: static
