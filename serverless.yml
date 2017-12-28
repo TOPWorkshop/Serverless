@@ -2,6 +2,12 @@ service: users
 
 plugins:
   - serverless-webpack
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
+    distributionFolder: static
 
 provider:
   name: aws
