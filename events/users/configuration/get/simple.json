@@ -1,0 +1,59 @@
+{
+  "resource": "/config/{configKey}",
+  "path": "/config/fbUserToken",
+  "httpMethod": "GET",
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "cache-control": "no-cache",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "IT",
+    "Content-Type": "application/json",
+    "Host": "mhwx6ohouj.execute-api.eu-west-1.amazonaws.com",
+    "Postman-Token": "75892a1b-84e2-4abe-ab3d-7e79442b505b",
+    "User-Agent": "PostmanRuntime/7.1.1",
+    "Via": "1.1 b4ee4db849dcb5fce83f0bc3d6a9d57f.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "GKZUp0KXCwOg_NjNyizYID-TlGdWIsfDLUWAI6RO7ocJmvaMGUfrLA==",
+    "X-Amzn-Trace-Id": "Root=1-5a46520e-6c8f864c3af895827bfe18ab",
+    "X-Forwarded-For": "5.94.7.147, 54.240.145.51",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "queryStringParameters": null,
+  "pathParameters": {
+    "configKey": "fbUserToken"
+  },
+  "stageVariables": null,
+  "requestContext": {
+    "requestTime": "29/Dec/2017:14:32:46 +0000",
+    "path": "/dev/config/fbUserToken",
+    "accountId": "541243713624",
+    "protocol": "HTTP/1.1",
+    "resourceId": "bcyivs",
+    "stage": "dev",
+    "requestTimeEpoch": 1514557966313,
+    "requestId": "233e3dc8-eca5-11e7-83a8-3dad91672b70",
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "sourceIp": "5.94.7.147",
+      "accessKey": null,
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "PostmanRuntime/7.1.1",
+      "user": null
+    },
+    "resourcePath": "/config/{configKey}",
+    "httpMethod": "GET",
+    "apiId": "mhwx6ohouj"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}

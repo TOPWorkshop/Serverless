@@ -1,7 +1,11 @@
 import AWS from 'aws-sdk';
 
 const TABLE_USERS = process.env.TABLE_USERS;
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamoDb = new AWS.DynamoDB.DocumentClient({
+  params: {
+    TableName: TABLE_USERS,
+  },
+});
 
 function createSuccessMessage(body) {
   return {
@@ -18,7 +22,7 @@ function createErrorMessage(error) {
 }
 
 export function list(event, context, callback) {
-  dynamoDb.scan({ TableName: TABLE_USERS }).promise()
+  dynamoDb.scan().promise()
     .then(result => callback(null, createSuccessMessage(result.Items)))
     .catch(error => callback(null, createErrorMessage(error)));
 }

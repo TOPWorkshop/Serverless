@@ -8,7 +8,7 @@ custom:
   webpack: ./config/webpack/serverless.js
   client:
     bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
-    distributionFolder: static
+    distributionFolder: static-dist
 
 provider:
   name: aws
@@ -20,27 +20,56 @@ provider:
         - dynamodb:Scan
         # - dynamodb:PutItem
       Resource:
-        - { "Fn::GetAtt": ["TOPWSUsers", "Arn" ] }
+        - { "Fn::GetAtt": ["TOPWSUsers", "Arn"] }
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - { "Fn::GetAtt": ["TOPWSConfig", "Arn"] }
   environment:
     TABLE_USERS: { "Ref": "TOPWSUsers" }
+    TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
 
 functions:
   list:
-    handler: users/index.list
+    handler: users/online.list
     events:
       - http:
           path: users
           method: get
+          cors: true
   vote:
-    handler: users/index.vote
+    handler: users/online.vote
     events:
       - http:
           path: users/{userId}/vote
           method: put
+          cors: true
           request:
             parameters:
               paths:
                 userId: true
+  scrape:
+    handler: users/batch.scrape
+  get:
+    handler: users/configuration.get
+    events:
+      - http:
+          path: config/{configKey}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                configKey: true
+  set:
+    handler: users/configuration.set
+    events:
+      - http:
+          path: config
+          method: post
+          cors: true
 
 resources:
   Resources:
@@ -48,10 +77,22 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: userId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: userId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    TOPWSConfig:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: key
+            AttributeType: S
+        KeySchema:
+          - AttributeName: key
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

@@ -1,4 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
+### Dist
+static-dist
+
 ### Serverless Framework
 .serverless
 .webpack

@@ -1,21 +1,31 @@
 const path = require('path');
-// eslint-disable-next-line import/no-unresolved
 const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
+
+const rootDir = path.join(__dirname, '..', '..');
 
 module.exports = {
   entry: slsw.lib.entries,
+
+  output: {
+    libraryTarget: 'commonjs',
+    path: path.join(rootDir, '.webpack'),
+    filename: '[name].js',
+  },
+
   target: 'node',
+  externals: [nodeExternals()],
+
   module: {
     loaders: [{
       test: /\.js$/,
-      loaders: ['babel-loader'],
-      include: __dirname,
-      exclude: /node_modules/,
+      loader: 'babel-loader',
+      include: path.join(rootDir, 'users'),
+      exclude: /node_modules|static/,
+      options: {
+        plugins: ['transform-runtime'],
+        presets: ['es2015', 'stage-0'],
+      },
     }],
-  },
-  output: {
-    libraryTarget: 'commonjs',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
   },
 };
