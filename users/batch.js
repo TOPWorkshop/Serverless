@@ -1,8 +1,8 @@
-import AWS from 'aws-sdk';
+import { DynamoDB } from 'aws-sdk';
 import axios from 'axios';
 
 const TABLE_USERS = process.env.TABLE_USERS;
-const dynamoDb = new AWS.DynamoDB.DocumentClient({
+const dynamoDb = new DynamoDB({
   params: {
     TableName: TABLE_USERS,
   },
@@ -41,7 +41,11 @@ export async function scrape(event, context, callback) {
     callback();
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
-      const message = error.response.data.error.message;
+      let message = error.response.data.error.message;
+
+      if (message.match(/Error validating access token/)) {
+        message = 'Facebook token expired! Please login again';
+      }
 
       callback(message);
 

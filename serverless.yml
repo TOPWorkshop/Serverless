@@ -6,6 +6,8 @@ plugins:
 
 custom:
   webpack: ./config/webpack/serverless.js
+  webpackIncludeModules:
+      packagePath: './package.json'
   client:
     bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
     distributionFolder: static-dist
@@ -18,7 +20,8 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:Scan
-        # - dynamodb:PutItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
       Resource:
         - { "Fn::GetAtt": ["TOPWSUsers", "Arn"] }
     - Effect: Allow

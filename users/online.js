@@ -1,7 +1,7 @@
-import AWS from 'aws-sdk';
+import { DynamoDB } from 'aws-sdk';
 
 const TABLE_USERS = process.env.TABLE_USERS;
-const dynamoDb = new AWS.DynamoDB.DocumentClient({
+const dynamoDb = new DynamoDB({
   params: {
     TableName: TABLE_USERS,
   },
@@ -30,5 +30,26 @@ export function list(event, context, callback) {
 export function vote(event, context, callback) {
   const { userId } = event.pathParameters;
 
-  callback(null, createSuccessMessage(event));
+  dynamoDb.updateItem({
+    Key: {
+      userId: {
+        S: userId,
+      },
+    },
+    ReturnValues: 'ALL_NEW',
+    UpdateExpression: 'SET #V = if_not_exists(#V, :no_votes) + :increment',
+    ExpressionAttributeNames: {
+      '#V': 'votes',
+    },
+    ExpressionAttributeValues: {
+      ':increment': {
+        N: '1',
+      },
+      ':no_votes': {
+        N: '0',
+      },
+    },
+  }).promise()
+    .then(result => callback(null, createSuccessMessage(result)))
+    .catch(error => callback(null, createErrorMessage(error)));
 }

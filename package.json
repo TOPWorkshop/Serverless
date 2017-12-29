@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "The repo for a serverless workshop, here in ThinkOpen",
   "scripts": {
+    "serverless": "serverless",
     "compile:static": "webpack --config config/webpack/static.js",
     "deploy": "npm run deploy:users && npm run deploy:static",
     "deploy:users": "serverless deploy",
