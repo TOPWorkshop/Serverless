@@ -1,44 +1,18 @@
-import { DynamoDB } from 'aws-sdk';
-
+import Configuration from './models/configuration';
 import { createSuccessMessage, createErrorMessage } from './utils';
 
-const TABLE_CONFIGURATION = process.env.TABLE_CONFIGURATION;
-const dynamoDb = new DynamoDB({
-  params: {
-    TableName: TABLE_CONFIGURATION,
-  },
-});
-
-export function get(event, context, callback) {
+export async function get(event, context, callback) {
   const { configKey } = event.pathParameters;
 
-  dynamoDb
-    .getItem({
-      Key: {
-        key: {
-          S: configKey,
-        },
-      },
-    })
-    .promise()
-    .then((configValue) => {
-      if (configValue.Item) {
-        const {
-          Item: {
-            value: {
-              S: value,
-            },
-          },
-        } = configValue;
+  Configuration.get({ key: configKey }, (error, configItem) => {
+    if (error) {
+      callback(null, createErrorMessage(error));
 
-        callback(null, createSuccessMessage(value));
+      return;
+    }
 
-        return;
-      }
-
-      callback(null, createSuccessMessage(null))
-    })
-    .catch(error => callback(null, createErrorMessage(error)));
+    callback(null, createSuccessMessage(configItem ? configItem.get('value') : {}));
+  });
 }
 
 export function set(event, context, callback) {
@@ -57,23 +31,13 @@ export function set(event, context, callback) {
       });
   }
 
-  Promise.all(Object.keys(bodyObj)
-    .map((key) => {
-      const value = bodyObj[key];
+  Configuration.create(Object.keys(bodyObj).map(key => ({ key, value: bodyObj[key] })), (error) => {
+    if (error) {
+      callback(null, createErrorMessage(error));
 
-      return dynamoDb
-        .putItem({
-          Item: {
-            key: {
-              S: key,
-            },
-            value: {
-              S: value,
-            },
-          },
-        })
-        .promise();
-    }))
-    .then(() => callback(null, createSuccessMessage()))
-    .catch(error => callback(null, createErrorMessage(error)));
+      return;
+    }
+
+    callback(null, createSuccessMessage());
+  });
 }

@@ -1,12 +1,5 @@
-import { DynamoDB } from 'aws-sdk';
 import axios from 'axios';
-
-const TABLE_USERS = process.env.TABLE_USERS;
-const dynamoDb = new DynamoDB({
-  params: {
-    TableName: TABLE_USERS,
-  },
-});
+import User from './models/users';
 
 export async function scrape(event, context, callback) {
   const baseUrl = 'https://graph.facebook.com/v2.11';
@@ -27,16 +20,10 @@ export async function scrape(event, context, callback) {
       },
     });
 
-    await Promise.all(users.map(user => dynamoDb.putItem({
-      Item: {
-        userId: {
-          S: user.id,
-        },
-        name: {
-          S: user.name,
-        },
-      },
-    }).promise()));
+    await Promise.all(users.map(user => new Promise((resolve, reject) => User.update({
+      userId: user.id,
+      name: user.name,
+    }, error => error ? reject(error) : resolve()))));
 
     callback();
   } catch (error) {
