@@ -23,4 +23,14 @@ const configurationSchema = new dynamoose.Schema({
   timestamps: true,
 });
 
+configurationSchema.statics.getValue = async function getValue(key) {
+  const configurationItem = await this.get({ [hashKey]: key });
+
+  if (!configurationItem) {
+    throw new Error(`Invalid ${key} configuration item`);
+  }
+
+  return configurationItem[fields.value];
+};
+
 export default dynamoose.model(tableName, configurationSchema);

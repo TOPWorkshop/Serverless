@@ -26,6 +26,7 @@ provider:
         - { "Fn::GetAtt": ["TOPWSUsers", "Arn"] }
     - Effect: Allow
       Action:
+        - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:UpdateItem
         - dynamodb:DescribeTable
@@ -56,6 +57,24 @@ functions:
                 userId: true
   user-scrape:
     handler: lambda/batch.scrape
+  config-get:
+    handler: lambda/configuration.get
+    events:
+      - http:
+          path: config/{configKey}
+          method: get
+          authorizer: authorize
+          request:
+            parameters:
+              paths:
+                configKey: true
+  config-list:
+    handler: lambda/configuration.list
+    events:
+      - http:
+          path: config
+          method: get
+          authorizer: authorize
   config-set:
     handler: lambda/configuration.set
     events:
@@ -63,6 +82,9 @@ functions:
           path: config
           method: post
           cors: true
+          authorizer: authorize
+  authorize:
+    handler: lambda/authorizer.facebook
 
 resources:
   Resources:

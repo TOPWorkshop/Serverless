@@ -1,5 +1,5 @@
 import User from './models/users';
-import { createSuccessMessage, createErrorMessage } from './utils';
+import { createSuccessMessage, createErrorMessage } from './utils/aws';
 
 export function list(event, context, callback) {
   User.scan().exec()

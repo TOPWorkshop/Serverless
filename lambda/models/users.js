@@ -29,7 +29,7 @@ const userSchema = new dynamoose.Schema({
   timestamps: true,
 });
 
-userSchema.statics.vote = function(userId) {
+userSchema.statics.vote = function vote(userId) {
   return this.update({ [hashKey]: userId }, { $ADD: { [fields.votes]: 1 } }, {
     condition: 'attribute_exists(#hashKey)',
     conditionNames: { hashKey },

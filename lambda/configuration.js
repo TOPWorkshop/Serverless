@@ -1,11 +1,17 @@
 import Configuration, { fields } from './models/configuration';
-import { createSuccessMessage, createErrorMessage } from './utils';
+import { createSuccessMessage, createErrorMessage } from './utils/aws';
 
-export async function get(event, context, callback) {
+export function get(event, context, callback) {
   const { configKey } = event.pathParameters;
 
-  Configuration.get({ [fields.key]: configKey })
-    .then(configItem => callback(null, createSuccessMessage(configItem ? configItem[fields.value] : {})))
+  Configuration.getValue(configKey)
+    .then(configValue => callback(null, createSuccessMessage(configValue || {})))
+    .catch(error => callback(null, createErrorMessage(error)));
+}
+
+export function list(event, context, callback) {
+  Configuration.scan().exec()
+    .then(configItems => callback(null, createSuccessMessage(configItems)))
     .catch(error => callback(null, createErrorMessage(error)));
 }
 
