@@ -18,7 +18,6 @@ const distDir = path.join(rootDir, 'static-dist');
 
 module.exports = {
   entry: [
-    'babel-polyfill',
     path.join(jsDir, 'main.js'),
     path.join(scssDir, 'main.scss'),
   ],
@@ -62,6 +61,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader',
       options: {
+        plugins: ['transform-runtime'],
         presets: ['es2015', 'stage-0'],
       },
     }, {
