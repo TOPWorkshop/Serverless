@@ -6,7 +6,7 @@
     "serverless": "serverless",
     "compile:static": "webpack --config config/webpack/static.js",
     "deploy": "npm run deploy:users && npm run deploy:static",
-    "deploy:users": "serverless deploy",
+    "deploy:lambda": "serverless deploy",
     "predeploy:static": "npm run compile:static",
     "deploy:static": "serverless client deploy",
     "test": "echo \"Error: no test specified\" && exit 1"

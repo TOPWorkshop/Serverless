@@ -20,7 +20,7 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       loader: 'babel-loader',
-      include: path.join(rootDir, 'users'),
+      include: path.join(rootDir, 'lambda'),
       exclude: /node_modules|static/,
       options: {
         plugins: ['transform-runtime'],

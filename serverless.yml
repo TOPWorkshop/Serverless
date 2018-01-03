@@ -37,14 +37,14 @@ provider:
 
 functions:
   list:
-    handler: users/online.list
+    handler: lambda/online.list
     events:
       - http:
           path: users
           method: get
           cors: true
   vote:
-    handler: users/online.vote
+    handler: lambda/online.vote
     events:
       - http:
           path: users/{userId}/vote
@@ -55,9 +55,9 @@ functions:
               paths:
                 userId: true
   scrape:
-    handler: users/batch.scrape
+    handler: lambda/batch.scrape
   get:
-    handler: users/configuration.get
+    handler: lambda/configuration.get
     events:
       - http:
           path: config/{configKey}
@@ -68,7 +68,7 @@ functions:
               paths:
                 configKey: true
   set:
-    handler: users/configuration.set
+    handler: lambda/configuration.set
     events:
       - http:
           path: config
