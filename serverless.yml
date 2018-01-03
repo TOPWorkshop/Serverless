@@ -1,4 +1,4 @@
-service: users
+service: TOPWS-serverless
 
 plugins:
   - serverless-webpack
@@ -36,14 +36,14 @@ provider:
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
 
 functions:
-  list:
+  user-list:
     handler: lambda/online.list
     events:
       - http:
           path: users
           method: get
           cors: true
-  vote:
+  user-vote:
     handler: lambda/online.vote
     events:
       - http:
@@ -54,20 +54,9 @@ functions:
             parameters:
               paths:
                 userId: true
-  scrape:
+  user-scrape:
     handler: lambda/batch.scrape
-  get:
-    handler: lambda/configuration.get
-    events:
-      - http:
-          path: config/{configKey}
-          method: get
-          cors: true
-          request:
-            parameters:
-              paths:
-                configKey: true
-  set:
+  config-set:
     handler: lambda/configuration.set
     events:
       - http:

@@ -5,7 +5,7 @@
   "scripts": {
     "serverless": "serverless",
     "compile:static": "webpack --config config/webpack/static.js",
-    "deploy": "npm run deploy:users && npm run deploy:static",
+    "deploy": "npm run deploy:lambda && npm run deploy:static",
     "deploy:lambda": "serverless deploy",
     "predeploy:static": "npm run compile:static",
     "deploy:static": "serverless client deploy",
