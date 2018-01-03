@@ -1,5 +1,5 @@
 import axios from 'axios';
-import User from './models/users';
+import User, { fields } from './models/users';
 
 export async function scrape(event, context, callback) {
   const baseUrl = 'https://graph.facebook.com/v2.11';
@@ -20,10 +20,10 @@ export async function scrape(event, context, callback) {
       },
     });
 
-    await Promise.all(users.map(user => new Promise((resolve, reject) => User.update({
-      userId: user.id,
-      name: user.name,
-    }, error => error ? reject(error) : resolve()))));
+    await Promise.all(users.map(user => User.update({
+      [fields.userId]: user.id,
+      [fields.name]: user.name,
+    })));
 
     callback();
   } catch (error) {

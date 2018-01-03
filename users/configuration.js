@@ -1,18 +1,12 @@
-import Configuration from './models/configuration';
+import Configuration, { fields } from './models/configuration';
 import { createSuccessMessage, createErrorMessage } from './utils';
 
 export async function get(event, context, callback) {
   const { configKey } = event.pathParameters;
 
-  Configuration.get({ key: configKey }, (error, configItem) => {
-    if (error) {
-      callback(null, createErrorMessage(error));
-
-      return;
-    }
-
-    callback(null, createSuccessMessage(configItem ? configItem.get('value') : {}));
-  });
+  Configuration.get({ [fields.key]: configKey })
+    .then(configItem => callback(null, createSuccessMessage(configItem ? configItem[fields.value] : {})))
+    .catch(error => callback(null, createErrorMessage(error)));
 }
 
 export function set(event, context, callback) {
@@ -31,13 +25,7 @@ export function set(event, context, callback) {
       });
   }
 
-  Configuration.create(Object.keys(bodyObj).map(key => ({ key, value: bodyObj[key] })), (error) => {
-    if (error) {
-      callback(null, createErrorMessage(error));
-
-      return;
-    }
-
-    callback(null, createSuccessMessage());
-  });
+  Promise.all(Object.keys(bodyObj).map(key => Configuration.update({ [fields.key]: key, [fields.value]: bodyObj[key] })))
+    .then(() => callback(null, createSuccessMessage()))
+    .catch(error => callback(null, createErrorMessage(error)));
 }

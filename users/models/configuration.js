@@ -1,15 +1,26 @@
-import Joi from 'joi';
-import dynogels from 'dynogels';
+import dynamoose from 'dynamoose';
 
-const TABLE_CONFIGURATION = process.env.TABLE_CONFIGURATION;
+export const tableName = process.env.TABLE_CONFIGURATION;
+export const fields = {
+  key: 'key',
+  value: 'value',
+};
+export const hashKey = fields.key;
 
-export default dynogels.define('Configuration', {
-  hashKey: 'key',
-  timestamps: true,
-  tableName: TABLE_CONFIGURATION,
 
-  schema: {
-    key: Joi.string().required(),
-    value: Joi.string().required(),
+const configurationSchema = new dynamoose.Schema({
+  [hashKey]: {
+    type: String,
+    required: true,
+    hashKey: true,
   },
+
+  [fields.value]: {
+    type: String,
+    required: true,
+  },
+}, {
+  timestamps: true,
 });
+
+export default dynamoose.model(tableName, configurationSchema);
