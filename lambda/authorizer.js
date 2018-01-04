@@ -2,6 +2,8 @@ import { generatePolicy } from './utils/aws';
 import { debugToken } from './utils/facebook';
 
 export async function facebook(event, context, callback) {
+  console.log(event);
+
   const token = event.authorizationToken;
   const method = event.methodArn;
 

@@ -1,16 +1,24 @@
-service: TOPWS-serverless
+service: topws-serverless
 
 plugins:
   - serverless-webpack
   - serverless-finch
 
 custom:
+  stage: ${opt:stage, self:provider.stage}
   webpack: ./config/webpack/serverless.js
   webpackIncludeModules:
       packagePath: './package.json'
   client:
     bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
     distributionFolder: static-dist
+  authorizer:
+    facebook:
+      name: authorizerFacebook
+      type: TOKEN
+      resultTtlInSeconds: 0
+      identitySource: method.request.header.Authorization
+      identityValidationExpression: Bearer (.*)
 
 provider:
   name: aws
@@ -44,6 +52,7 @@ functions:
           path: users
           method: get
           cors: true
+
   user-vote:
     handler: lambda/online.vote
     events:
@@ -55,26 +64,30 @@ functions:
             parameters:
               paths:
                 userId: true
+
   user-scrape:
     handler: lambda/batch.scrape
+
   config-get:
     handler: lambda/configuration.get
     events:
       - http:
           path: config/{configKey}
           method: get
-          authorizer: authorize
+          authorizer: ${self:custom.authorizer.facebook}
           request:
             parameters:
               paths:
                 configKey: true
+
   config-list:
     handler: lambda/configuration.list
     events:
       - http:
           path: config
           method: get
-          authorizer: authorize
+          authorizer: ${self:custom.authorizer.facebook}
+
   config-set:
     handler: lambda/configuration.set
     events:
@@ -82,8 +95,9 @@ functions:
           path: config
           method: post
           cors: true
-          authorizer: authorize
-  authorize:
+          authorizer: ${self:custom.authorizer.facebook}
+
+  authorizerFacebook:
     handler: lambda/authorizer.facebook
 
 resources:

@@ -9,6 +9,8 @@ window.saveUserAccessToken = function saveUserAccessToken() {
   FB.getLoginStatus(function(response) {
     const { authResponse: { accessToken } } = response;
 
+    console.log(accessToken);
+
     axios
       .post(`${baseUrl}${endpointConfigSet}`, {
         [configKey]: accessToken,
