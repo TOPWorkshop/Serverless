@@ -41,8 +41,6 @@ export async function debugToken(input_token) {
     },
   });
 
-  console.log(data);
-
   return data;
 }
 

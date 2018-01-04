@@ -19,6 +19,8 @@ custom:
       resultTtlInSeconds: 0
       identitySource: method.request.header.Authorization
       identityValidationExpression: Bearer (.*)
+  sns:
+    errors: ${self:service}-errors
 
 provider:
   name: aws
@@ -40,9 +42,15 @@ provider:
         - dynamodb:DescribeTable
       Resource:
         - { "Fn::GetAtt": ["TOPWSConfig", "Arn"] }
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource:
+        - { "Ref": "TOPWSErrors" }
   environment:
     TABLE_USERS: { "Ref": "TOPWSUsers" }
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
+    SNS_ERRORS: { "Ref": "TOPWSErrors" }
 
 functions:
   user-list:
@@ -100,8 +108,28 @@ functions:
   authorizerFacebook:
     handler: lambda/authorizer.facebook
 
+  dispatchErrorToTelegram:
+    handler: lambda/telegram.forwardSNS
+    events:
+      - sns:
+          arn:
+            Fn::Join:
+              - ""
+              - - "arn:aws:sns:"
+                - Ref: "AWS::Region"
+                - ":"
+                - Ref: "AWS::AccountId"
+                - ":"
+                - ${self:custom.sns.errors}
+          topicName: ${self:custom.sns.errors}
+
 resources:
   Resources:
+    TOPWSErrors:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: Error messages pipeline
+        TopicName: ${self:custom.sns.errors}
     TOPWSUsers:
       Type: AWS::DynamoDB::Table
       Properties:
