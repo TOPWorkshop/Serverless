@@ -1,21 +1,65 @@
+import { Lambda } from 'aws-sdk';
 import axios from 'axios';
 
-async function sendTelegramMessage(token, chat_id, text) {
+import Configuration from './models/configuration';
+import { createSuccessMessage } from './utils/aws';
+
+const userIdKey = 'telegramUserId';
+
+async function sendTelegramMessage(chat_id, text) {
+  const tokenKey = 'telegramBotToken';
+  const token = await Configuration.getValue(tokenKey);
+
   const { data } = axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
     chat_id,
     text,
     parse_mode: 'HTML',
   });
 
-  console.log(data);
-
   return data;
 }
 
-export function forwardSNS(event, context, callback) {
-  const message = event.Records[0].Sns.Message;
+export async function forwardSNS(event, context, callback) {
+  try {
+    const message = event.Records[0].Sns.Message;
+    const chatId = await Configuration.getValue(userIdKey);
 
-  console.log(message);
+    await sendTelegramMessage(chatId, message);
 
-  callback();
+    callback();
+  } catch (error) {
+    callback(error);
+  }
+}
+
+export async function handleMessage(event, context, callback) {
+  const body = JSON.parse(event.body);
+
+  try {
+    const expectedChatId = await Configuration.getValue(userIdKey);
+    const chatId = body.message.chat.id;
+
+    callback(null, createSuccessMessage({}));
+
+    if (expectedChatId !== `${chatId}`) {
+      await sendTelegramMessage(chatId, 'You cannot chat with me!');
+    } else {
+      const command = body.message.text;
+
+      await sendTelegramMessage(chatId, 'Hi Nic!');
+
+      if (command === '/scrape') {
+        const lambda = new Lambda();
+        const scrapeFunction = process.env.LAMBDA_SCRAPE;
+
+        await lambda.invoke({
+          FunctionName: scrapeFunction,
+        }).promise();
+      }
+    }
+  } catch (error) {
+    console.error(error);
+
+    callback(null, createSuccessMessage({}));
+  }
 }

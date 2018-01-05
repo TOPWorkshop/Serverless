@@ -47,10 +47,15 @@ provider:
         - SNS:Publish
       Resource:
         - { "Ref": "TOPWSErrors" }
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
   environment:
     TABLE_USERS: { "Ref": "TOPWSUsers" }
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
     SNS_ERRORS: { "Ref": "TOPWSErrors" }
+    LAMBDA_SCRAPE: ${self:service}-${opt:stage, self:provider.stage}-user-scrape
 
 functions:
   user-list:
@@ -107,6 +112,13 @@ functions:
 
   authorizerFacebook:
     handler: lambda/authorizer.facebook
+
+  telegram-handleMessage:
+    handler: lambda/telegram.handleMessage
+    events:
+     - http:
+        path: telegram
+        method: post
 
   dispatchErrorToTelegram:
     handler: lambda/telegram.forwardSNS
