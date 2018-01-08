@@ -135,6 +135,11 @@ functions:
                 - ${self:custom.sns.errors}
           topicName: ${self:custom.sns.errors}
 
+  dispatchLogs:
+    handler: lambda/logs.handle
+    events:
+      - cloudwatchLog: /aws/lambda/topws-serverless-dev-telegram-handleMessage
+
 resources:
   Resources:
     TOPWSErrors:

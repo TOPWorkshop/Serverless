@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import Configuration from './models/configuration';
 import { createSuccessMessage } from './utils/aws';
+import log from './utils/log';
 
 const userIdKey = 'telegramUserId';
 
@@ -54,7 +55,16 @@ export async function handleMessage(event, context, callback) {
 
         await lambda.invoke({
           FunctionName: scrapeFunction,
+          InvocationType: 'Event',
         }).promise();
+      }
+
+      if (command === '/error') {
+        log.error('telegram', 'OMG you have an error!!!');
+      }
+
+      if (command === '/timeout') {
+        setTimeout(() => log.info('Timeout expired'), 2500);
       }
     }
   } catch (error) {

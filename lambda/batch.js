@@ -1,5 +1,6 @@
 import User, { fields as userFields } from './models/users';
 import { getEventAttending } from './utils/facebook';
+import log from './utils/log';
 
 export async function scrape(event, context, callback) {
   const eventId = '1804514646517478';
@@ -11,6 +12,8 @@ export async function scrape(event, context, callback) {
       [userFields.userId]: user.id,
       [userFields.name]: user.name,
     })));
+
+    log.info('scrape', 'Scraping completed!');
 
     callback();
   } catch (error) {
