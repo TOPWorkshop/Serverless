@@ -2,6 +2,10 @@ import zlib from 'zlib';
 import axios from 'axios';
 import { SNS } from 'aws-sdk';
 
+import Configuration from './models/configuration';
+
+const logdnaTokenKey = 'logdnaToken';
+
 function mapEvent(logEvent, logGroup) {
   const { timestamp, message } = logEvent;
 
@@ -99,6 +103,8 @@ async function archiveLogEvents(logEvents) {
     return;
   }
 
+  const logdnaToken = await Configuration.getValue(logdnaTokenKey);
+
   await axios.post('https://logs.logdna.com/logs/ingest', { lines }, {
     params: {
       hostname: logEvents[0].lambdaFunction || logEvents[0].logGroup,
@@ -106,7 +112,7 @@ async function archiveLogEvents(logEvents) {
     },
 
     auth: {
-      username: '61f889f6d5b14a3c82194f3a670e3b72',
+      username: logdnaToken,
     },
   });
 }

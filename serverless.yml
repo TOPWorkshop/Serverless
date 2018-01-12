@@ -10,7 +10,7 @@ custom:
   webpackIncludeModules:
       packagePath: './package.json'
   client:
-    bucketName: ${self:service}-${opt:stage, self:provider.stage}-static
+    bucketName: ${self:service}-${self:custom.stage}-static
     distributionFolder: static-dist
   authorizer:
     facebook:
@@ -20,7 +20,7 @@ custom:
       identitySource: method.request.header.Authorization
       identityValidationExpression: Bearer (.*)
   sns:
-    errors: ${self:service}-errors
+    telegram: ${self:service}-telegram
 
 provider:
   name: aws
@@ -46,7 +46,7 @@ provider:
       Action:
         - SNS:Publish
       Resource:
-        - { "Ref": "TOPWSErrors" }
+        - { "Ref": "TOPWSTelegram" }
     - Effect: Allow
       Action:
         - lambda:InvokeFunction
@@ -54,7 +54,7 @@ provider:
   environment:
     TABLE_USERS: { "Ref": "TOPWSUsers" }
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
-    SNS_ERRORS: { "Ref": "TOPWSErrors" }
+    SNS_TELEGRAM: { "Ref": "TOPWSTelegram" }
     LAMBDA_SCRAPE: ${self:service}-${opt:stage, self:provider.stage}-user-scrape
 
 functions:
@@ -120,7 +120,7 @@ functions:
         path: telegram
         method: post
 
-  dispatchErrorToTelegram:
+  dispatchToTelegram:
     handler: lambda/telegram.forwardSNS
     events:
       - sns:
@@ -132,21 +132,23 @@ functions:
                 - ":"
                 - Ref: "AWS::AccountId"
                 - ":"
-                - ${self:custom.sns.errors}
-          topicName: ${self:custom.sns.errors}
+                - ${self:custom.sns.telegram}
+          topicName: ${self:custom.sns.telegram}
 
   dispatchLogs:
     handler: lambda/logs.handle
     events:
-      - cloudwatchLog: /aws/lambda/topws-serverless-dev-telegram-handleMessage
+      - cloudwatchLog:
+          logGroup: /aws/lambda
+          filter: /aws/lambda/topws-serverless-${self:custom.stage}-dispatchLogs
 
 resources:
   Resources:
-    TOPWSErrors:
+    TOPWSTelegram:
       Type: AWS::SNS::Topic
       Properties:
-        DisplayName: Error messages pipeline
-        TopicName: ${self:custom.sns.errors}
+        DisplayName: Telegram messages pipeline
+        TopicName: ${self:custom.sns.telegram}
     TOPWSUsers:
       Type: AWS::DynamoDB::Table
       Properties:

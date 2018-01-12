@@ -1,7 +1,9 @@
-import { SNS } from 'aws-sdk';
-
+import Configuration from './models/configuration';
 import { generatePolicy } from './utils/aws';
 import { debugToken } from './utils/facebook';
+import log from './utils/log';
+
+const userIdKey = 'fbUserId';
 
 export async function facebook(event, context, callback) {
   const token = event.authorizationToken;
@@ -11,19 +13,19 @@ export async function facebook(event, context, callback) {
 
   try {
     if (bearerMatch) {
+      const myUserId = await Configuration.getValue(userIdKey);
+
       const accessToken = bearerMatch[1];
       const { user_id, is_valid } = await debugToken(accessToken);
 
-      const canAccess = is_valid && user_id === '10155151351877452';
+      const canAccess = is_valid && user_id === myUserId;
 
       if (!canAccess) {
-        const sns = new SNS();
-        const snsErrorTopicArn = process.env.SNS_ERRORS;
-
-        await sns.publish({
-          Message: 'Someone is trying to access private endpoints without a valid token',
-          TopicArn: snsErrorTopicArn,
-        }).promise();
+        log.error('authorizer', 'Someone is trying to access private endpoints without a valid token', {
+          method,
+          token,
+          facebookUserId: user_id,
+        });
       }
 
       callback(null, generatePolicy('user', canAccess ? 'Allow' : 'Deny', method));
