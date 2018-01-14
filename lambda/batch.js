@@ -10,7 +10,10 @@ export async function scrape(event, context, callback) {
 
     await Promise.all(users.map(user => User.update({
       [userFields.userId]: user.id,
+    }, {
       [userFields.name]: user.name,
+    }, {
+      createRequired: true,
     })));
 
     log.info('scrape', 'Scraping completed!');

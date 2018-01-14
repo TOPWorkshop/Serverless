@@ -45,13 +45,6 @@ module.exports = {
       path.join(jsDir, 'main.js'),
       path.join(scssDir, 'main.scss'),
     ],
-
-    vendor: [
-      'axios',
-      'bootstrap',
-      'jquery',
-      'vue',
-    ],
   },
 
   output: {
@@ -108,14 +101,6 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.ProvidePlugin({ // inject ES5 modules as global vars
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      Popper: ['popper.js', 'default'],
-      // in case bootstrap's modules were imported individually, they must also be provided here:
-      // Util: "exports-loader?Util!bootstrap/js/dist/util",
-    }),
     new webpack.optimize.CommonsChunkPlugin({ // seperate vendor chunks
       name: ['vendor', 'manifest'],
     }),

@@ -56,6 +56,7 @@ provider:
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
     SNS_TELEGRAM: { "Ref": "TOPWSTelegram" }
     LAMBDA_SCRAPE: ${self:service}-${opt:stage, self:provider.stage}-user-scrape
+    DEBUG: "dynamoose:*"
 
 functions:
   user-list:
@@ -87,6 +88,7 @@ functions:
       - http:
           path: config/{configKey}
           method: get
+          cors: true
           authorizer: ${self:custom.authorizer.facebook}
           request:
             parameters:
@@ -99,6 +101,7 @@ functions:
       - http:
           path: config
           method: get
+          cors: true
           authorizer: ${self:custom.authorizer.facebook}
 
   config-set:
@@ -138,9 +141,7 @@ functions:
   dispatchLogs:
     handler: lambda/logs.handle
     events:
-      - cloudwatchLog:
-          logGroup: /aws/lambda
-          filter: /aws/lambda/topws-serverless-${self:custom.stage}-dispatchLogs
+      - cloudwatchLog: /aws/lambda/topws-serverless-dev-telegram-handleMessage
 
 resources:
   Resources:

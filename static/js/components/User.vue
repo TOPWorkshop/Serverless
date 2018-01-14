@@ -1,6 +1,6 @@
 <template>
     <li>
-      {{ user.name }} ({{ user.votes || 0}}) <span v-on:click="vote">VOTE</span>
+      {{ user.name }} <span v-on:click="vote">💜</span> <span v-if="user.votes > 0">({{ user.votes }})</span>
     </li>
 </template>
 

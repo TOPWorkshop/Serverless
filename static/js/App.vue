@@ -1,12 +1,16 @@
 <template>
-    <UsersList></UsersList>
+  <div>
+    <ConfigButtons/>
+    <UsersList/>
+  </div>
 </template>
 
 <script>
+  import ConfigButtons from './components/ConfigButtons';
   import UsersList from './components/UsersList';
 
   export default {
     name: 'app',
-    components: { UsersList },
+    components: { ConfigButtons, UsersList },
   }
 </script>

@@ -1,0 +1,10 @@
+{
+  "lambda": {
+    "baseUrl": "https://n8avbibtf8.execute-api.eu-west-1.amazonaws.com/dev",
+    "endpoints": {
+      "users_list": "users",
+      "users_vote": "users/{userId}/vote",
+      "config_get": "config/{configKey}"
+    }
+  }
+}

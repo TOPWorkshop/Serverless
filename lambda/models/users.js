@@ -22,6 +22,7 @@ const userSchema = new dynamoose.Schema({
 
   [fields.votes]: {
     type: Number,
+    required: true,
     default: 0,
     validate: value => value >= 0,
   },

@@ -9,9 +9,9 @@
 <script>
   import axios from 'axios';
 
-  import User from './User';
+  import config from '../config';
 
-  const baseUrl = 'https://n8avbibtf8.execute-api.eu-west-1.amazonaws.com/dev/users';
+  import User from './User';
 
   export default {
     name: 'users-list',
@@ -26,12 +26,12 @@
 
     methods: {
       fetchUsers() {
-        axios.get(baseUrl)
+        axios.get(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_list}`)
           .then(({ data: users }) => this.users = users);
       },
 
       voteUser(user) {
-        axios.put(`${baseUrl}/${user.userId}/vote`)
+        axios.put(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_vote.replace('{userId}', user.userId)}`)
           .then(() => this.fetchUsers());
       },
     },
@@ -40,7 +40,7 @@
       sortedUsersByVote() {
         return this.users.sort((a, b) => {
           if (a.votes !== b.votes) {
-            return a.votes - b.votes;
+            return b.votes - a.votes;
           }
 
           return a.name < b.name ? -1 : 1;
@@ -55,8 +55,6 @@
     },
 
     beforeDestroy() {
-      console.log('beforeDestroy');
-
       clearInterval(this.interval);
     },
   }
