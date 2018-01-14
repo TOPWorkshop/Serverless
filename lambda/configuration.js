@@ -31,7 +31,9 @@ export function set(event, context, callback) {
       });
   }
 
-  Promise.all(Object.keys(bodyObj).map(key => Configuration.update({ [fields.key]: key, [fields.value]: bodyObj[key] })))
+  Promise
+    .all(Object.keys(bodyObj)
+      .map(key => Configuration.update({ [fields.key]: key, [fields.value]: bodyObj[key] })))
     .then(() => callback(null, createSuccessMessage()))
     .catch(error => callback(null, createErrorMessage(error)));
 }

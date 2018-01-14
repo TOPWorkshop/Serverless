@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import App from './App';
 
-new Vue({
+Vue({
   el: '#app',
   template: '<App/>',
   components: { App },

@@ -5,6 +5,7 @@ import log from './utils/log';
 
 const userIdKey = 'fbUserId';
 
+// eslint-disable-next-line import/prefer-default-export
 export async function facebook(event, context, callback) {
   const token = event.authorizationToken;
   const method = event.methodArn;
@@ -16,15 +17,18 @@ export async function facebook(event, context, callback) {
       const myUserId = await Configuration.getValue(userIdKey);
 
       const accessToken = bearerMatch[1];
-      const { user_id, is_valid } = await debugToken(accessToken);
+      const {
+        user_id: userId,
+        is_valid: isValid,
+      } = await debugToken(accessToken);
 
-      const canAccess = is_valid && user_id === myUserId;
+      const canAccess = isValid && userId === myUserId;
 
       if (!canAccess) {
         log.error('authorizer', 'Someone is trying to access private endpoints without a valid token', {
           method,
           token,
-          facebookUserId: user_id,
+          facebookUserId: userId,
         });
       }
 
@@ -35,9 +39,8 @@ export async function facebook(event, context, callback) {
 
     callback(null, generatePolicy('user', 'Deny', method));
   } catch (error) {
-    console.error(error);
+    log.error('authorizer', error);
 
     callback(null, generatePolicy('user', 'Deny', method));
   }
-
 }

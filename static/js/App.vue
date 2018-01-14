@@ -10,7 +10,7 @@
   import UsersList from './components/UsersList';
 
   export default {
-    name: 'app',
+    name: 'App',
     components: { ConfigButtons, UsersList },
   }
 </script>

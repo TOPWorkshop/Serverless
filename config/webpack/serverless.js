@@ -1,6 +1,6 @@
 const path = require('path');
-const slsw = require('serverless-webpack');
-const nodeExternals = require('webpack-node-externals');
+const slsw = require('serverless-webpack'); // eslint-disable-line import/no-extraneous-dependencies
+const nodeExternals = require('webpack-node-externals'); // eslint-disable-line import/no-extraneous-dependencies
 
 const rootDir = path.join(__dirname, '..', '..');
 

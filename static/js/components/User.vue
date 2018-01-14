@@ -1,14 +1,25 @@
 <template>
-    <li>
-      {{ user.name }} <span v-on:click="vote">💜</span> <span v-if="user.votes > 0">({{ user.votes }})</span>
-    </li>
+  <li>
+    {{ user.name }} <span @click="vote">💜</span> <span v-if="user.votes > 0">({{ user.votes }})</span>
+  </li>
 </template>
 
 <script>
   export default {
-    name: 'user',
+    name: 'User',
 
-    props: ['user'],
+    props: {
+      user: {
+        type: Object,
+        default: () => ({
+          userId: '',
+          name: '',
+          votes: 0,
+          createdAt: '',
+          updatedAt: '',
+        }),
+      },
+    },
 
     methods: {
       vote() {

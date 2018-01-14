@@ -9,35 +9,40 @@ async function getAccessToken() {
   const keyClientId = 'fbAppId';
   const keyClientSecret = 'fbAppSecret';
 
-  const [client_id, client_secret] = await Promise.all([
+  const [clientId, clientSecret] = await Promise.all([
     Configuration.getValue(keyClientId),
     Configuration.getValue(keyClientSecret),
   ]);
 
-  const { data: { access_token, token_type } } = await axios.get(`${baseUrl}/oauth/access_token`, {
+  const {
+    data: {
+      access_token: accessToken,
+      token_type: tokenType,
+    },
+  } = await axios.get(`${baseUrl}/oauth/access_token`, {
     params: {
-      client_id,
-      client_secret,
+      clientId,
+      clientSecret,
       grant_type: 'client_credentials',
     },
   });
 
-  return { access_token, token_type };
+  return { accessToken, tokenType };
 }
 
 async function getAuthorization() {
-  const { access_token, token_type } = await getAccessToken();
+  const { accessToken, tokenType } = await getAccessToken();
 
-  return `${token_type.charAt(0).toUpperCase()}${token_type.slice(1)} ${access_token}`;
+  return `${tokenType.charAt(0).toUpperCase()}${tokenType.slice(1)} ${accessToken}`;
 }
 
-export async function debugToken(input_token) {
-  const { access_token } = await getAccessToken();
+export async function debugToken(inputToken) {
+  const { accessToken } = await getAccessToken();
 
   const { data: { data } } = await axios.get(`${baseUrl}/debug_token`, {
     params: {
-      input_token,
-      access_token,
+      input_token: inputToken,
+      access_token: accessToken,
     },
   });
 

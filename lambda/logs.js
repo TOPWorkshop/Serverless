@@ -1,6 +1,6 @@
 import zlib from 'zlib';
 import axios from 'axios';
-import { SNS } from 'aws-sdk';
+import { SNS } from 'aws-sdk'; // eslint-disable-line import/no-extraneous-dependencies
 
 import Configuration from './models/configuration';
 
@@ -15,7 +15,7 @@ function mapEvent(logEvent, logGroup) {
 
   match = logGroup.match(/^\/aws\/lambda\/(.+)$/);
   if (match) {
-    resultLogEvent.lambdaFunction = match[1];
+    [, resultLogEvent.lambdaFunction] = match;
   } else {
     resultLogEvent.logGroup = logGroup;
   }
@@ -28,7 +28,7 @@ function mapEvent(logEvent, logGroup) {
       requestId: match[1],
       version: match[2],
       level: 'verbose',
-      message: `START`,
+      message: 'START',
     };
   }
 
@@ -39,7 +39,7 @@ function mapEvent(logEvent, logGroup) {
       type: 'end',
       requestId: match[1],
       level: 'verbose',
-      message: `END`,
+      message: 'END',
     };
   }
 
@@ -54,7 +54,7 @@ function mapEvent(logEvent, logGroup) {
       memorySize: match[4],
       maxMemoryUsed: match[5],
       level: 'verbose',
-      message: `REPORT`,
+      message: 'REPORT',
     };
   }
 
@@ -125,7 +125,7 @@ async function handleLogEvent(logEvent) {
     ||
     (logEvent.logger === 'scrape' && logEvent.levelIndex < 3)
   ) {
-    telegramMessage = `${logEvent.level.toUpperCase()} [${logEvent.logger}] - ${logEvent.message}`
+    telegramMessage = `${logEvent.level.toUpperCase()} [${logEvent.logger}] - ${logEvent.message}`;
   }
 
   if (logEvent.type === 'report' && parseInt(logEvent.duration, 10) > 2000) {
@@ -133,8 +133,6 @@ async function handleLogEvent(logEvent) {
   }
 
   if (telegramMessage) {
-    console.log('TELEGRAM', telegramMessage);
-
     const sns = new SNS();
     const snsErrorTopicArn = process.env.SNS_ERRORS;
 
@@ -145,6 +143,7 @@ async function handleLogEvent(logEvent) {
   }
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export async function handle(event, context, callback) {
   const payload = Buffer.from(event.awslogs.data, 'base64');
 

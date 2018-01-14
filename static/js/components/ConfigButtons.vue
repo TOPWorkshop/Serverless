@@ -1,7 +1,11 @@
 <template>
   <div>
-    <span v-if="!accessToken" @click="doFacebookLogin">🔒</span>
-    <span v-if="accessToken" @click="fetchConfig">🔓</span>
+    <span
+      v-if="!accessToken"
+      @click="doFacebookLogin">🔒</span>
+    <span
+      v-if="accessToken"
+      @click="fetchConfig">🔓</span>
   </div>
 </template>
 
@@ -11,7 +15,7 @@
   import config from '../config';
 
   export default {
-    name: 'config-buttons',
+    name: 'ConfigButtons',
 
     data() {
       return {

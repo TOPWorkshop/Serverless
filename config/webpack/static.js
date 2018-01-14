@@ -1,9 +1,13 @@
 const path = require('path');
-const webpack = require('webpack');
+const webpack = require('webpack'); // eslint-disable-line import/no-extraneous-dependencies
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+const postcssFlexbugsFixes = require('postcss-flexbugs-fixes'); // eslint-disable-line import/no-extraneous-dependencies
+const autoprefixer = require('autoprefixer'); // eslint-disable-line import/no-extraneous-dependencies
+const cssnano = require('cssnano'); // eslint-disable-line import/no-extraneous-dependencies
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin'); // eslint-disable-line import/no-extraneous-dependencies
 
 const rootDir = path.join(__dirname, '..', '..');
 
@@ -24,12 +28,12 @@ const scssLoaders = [
       sourceMap: true,
       plugins: () => {
         const plugins = [
-          require('postcss-flexbugs-fixes')(),
-          require('autoprefixer')(),
+          postcssFlexbugsFixes(),
+          autoprefixer(),
         ];
 
         if (isProd) {
-          plugins.push(require('cssnano')());
+          plugins.push(cssnano());
         }
 
         return plugins;
@@ -58,7 +62,7 @@ module.exports = {
       loaders: ExtractTextPlugin.extract({
         fallback: 'style-loader',
         use: scssLoaders,
-      })
+      }),
     }, {
       test: /\.vue$/,
       loader: 'vue-loader',
@@ -95,7 +99,7 @@ module.exports = {
 
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
+      vue$: 'vue/dist/vue.esm.js',
     },
     extensions: ['*', '.js', '.vue', '.json'],
   },
@@ -121,19 +125,19 @@ if (isProd) {
 
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
-      }
+        NODE_ENV: '"production"',
+      },
     }),
 
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       compress: {
-        warnings: false
-      }
+        warnings: false,
+      },
     }),
 
     new webpack.LoaderOptionsPlugin({
-      minimize: true
+      minimize: true,
     }),
-  ]
+  ];
 }

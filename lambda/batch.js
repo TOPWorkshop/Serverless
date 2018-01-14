@@ -2,6 +2,7 @@ import User, { fields as userFields } from './models/users';
 import { getEventAttending } from './utils/facebook';
 import log from './utils/log';
 
+// eslint-disable-next-line import/prefer-default-export
 export async function scrape(event, context, callback) {
   const eventId = '1804514646517478';
 
@@ -21,7 +22,7 @@ export async function scrape(event, context, callback) {
     callback();
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
-      let message = error.response.data.error.message;
+      let { message } = error.response.data.error;
 
       if (message.match(/Error validating access token/)) {
         message = 'Facebook token expired! Please login again';
@@ -32,7 +33,7 @@ export async function scrape(event, context, callback) {
       return;
     }
 
-    console.error(error);
+    log.error('scrape', error);
 
     callback(error);
   }

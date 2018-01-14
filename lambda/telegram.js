@@ -1,4 +1,4 @@
-import { Lambda } from 'aws-sdk';
+import { Lambda } from 'aws-sdk'; // eslint-disable-line import/no-extraneous-dependencies
 import axios from 'axios';
 
 import Configuration from './models/configuration';
@@ -7,12 +7,12 @@ import log from './utils/log';
 
 const userIdKey = 'telegramUserId';
 
-async function sendTelegramMessage(chat_id, text) {
+async function sendTelegramMessage(chatId, text) {
   const tokenKey = 'telegramBotToken';
   const token = await Configuration.getValue(tokenKey);
 
   const { data } = axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
-    chat_id,
+    chat_id: chatId,
     text,
     parse_mode: 'HTML',
   });
@@ -68,7 +68,7 @@ export async function handleMessage(event, context, callback) {
       }
     }
   } catch (error) {
-    console.error(error);
+    log.error('telegram', error);
 
     callback(null, createSuccessMessage({}));
   }

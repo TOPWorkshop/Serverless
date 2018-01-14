@@ -9,8 +9,8 @@ const levels = {
 
 function doLog(level, logger, message, meta = {}) {
   if (!message) {
-    message = logger;
-    logger = 'default';
+    message = logger; // eslint-disable-line no-param-reassign
+    logger = 'default'; // eslint-disable-line no-param-reassign
   }
 
   const logObj = Object.assign({
@@ -20,7 +20,7 @@ function doLog(level, logger, message, meta = {}) {
     message,
   }, meta);
 
-  console.log(JSON.stringify(logObj));
+  console.log(JSON.stringify(logObj)); // eslint-disable-line no-console
 }
 
 const log = {};

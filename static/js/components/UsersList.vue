@@ -1,7 +1,11 @@
 <template>
   <div class="container">
     <ol>
-      <User v-for="user in sortedUsersByVote" :user="user" @vote="voteUser" v-bind:key="user.userId"/>
+      <User
+        v-for="user in sortedUsersByVote"
+        @vote="voteUser"
+        :user="user"
+        :key="user.userId"/>
     </ol>
   </div>
 </template>
@@ -14,7 +18,7 @@
   import User from './User';
 
   export default {
-    name: 'users-list',
+    name: 'UsersList',
     components: { User },
 
     data() {
@@ -24,21 +28,9 @@
       };
     },
 
-    methods: {
-      fetchUsers() {
-        axios.get(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_list}`)
-          .then(({ data: users }) => this.users = users);
-      },
-
-      voteUser(user) {
-        axios.put(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_vote.replace('{userId}', user.userId)}`)
-          .then(() => this.fetchUsers());
-      },
-    },
-
     computed: {
       sortedUsersByVote() {
-        return this.users.sort((a, b) => {
+        return this.users.slice(0).sort((a, b) => {
           if (a.votes !== b.votes) {
             return b.votes - a.votes;
           }
@@ -56,6 +48,18 @@
 
     beforeDestroy() {
       clearInterval(this.interval);
+    },
+
+    methods: {
+      fetchUsers() {
+        axios.get(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_list}`)
+          .then(({ data: users }) => this.users = users);
+      },
+
+      voteUser(user) {
+        axios.put(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_vote.replace('{userId}', user.userId)}`)
+          .then(() => this.fetchUsers());
+      },
     },
   }
 </script>
