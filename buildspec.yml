@@ -6,4 +6,4 @@ phases:
       - npm install
   build:
     commands:
-      - npm run deploy | tee deploy.out
+      - npm run deploy
