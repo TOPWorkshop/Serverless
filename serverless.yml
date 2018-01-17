@@ -56,7 +56,6 @@ provider:
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
     SNS_TELEGRAM: { "Ref": "TOPWSTelegram" }
     LAMBDA_SCRAPE: ${self:service}-${opt:stage, self:provider.stage}-user-scrape
-    DEBUG: "dynamoose:*"
 
 functions:
   user-list:
