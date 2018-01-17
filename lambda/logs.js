@@ -1,8 +1,9 @@
 import zlib from 'zlib';
 import axios from 'axios';
-import { SNS } from 'aws-sdk'; // eslint-disable-line import/no-extraneous-dependencies
+import { SNS, CloudWatchLogs } from 'aws-sdk'; // eslint-disable-line import/no-extraneous-dependencies
 
 import Configuration from './models/configuration';
+import log from './utils/log';
 
 const logdnaTokenKey = 'logdnaToken';
 
@@ -163,6 +164,67 @@ export async function handle(event, context, callback) {
     await Promise.all(events.map(logEvent => handleLogEvent(logEvent)));
 
     callback();
+  } catch (error) {
+    callback(error);
+  }
+}
+
+async function subscribeToLogGroup(logGroupName, destinationArn) {
+  const destinationFunctionName = destinationArn.split(':').reverse()[0];
+
+  if (logGroupName === `/aws/lambda/${destinationFunctionName}`) {
+    log.verbose(`Ignoring ${logGroupName}`);
+
+    return 'ignored';
+  }
+
+  const filterName = 'dispatchLogs';
+
+  const cloudWatchLogs = new CloudWatchLogs();
+  const { subscriptionFilters } = await cloudWatchLogs.describeSubscriptionFilters({ logGroupName })
+    .promise();
+
+  if (
+    !subscriptionFilters.some(subscriptionFilter =>
+      subscriptionFilter.filterName === filterName)
+  ) {
+    await cloudWatchLogs.putSubscriptionFilter({
+      destinationArn,
+      logGroupName,
+      filterName,
+      filterPattern: '',
+    }).promise();
+
+    return 'ok';
+  }
+
+  return 'ignored';
+}
+
+export async function subscribe(event, context, callback) {
+  const destinationArn = process.env.DEST_FUNC;
+  const destinationFunctionName = destinationArn.split(':').reverse()[0];
+
+  const [, stage, ...service] = destinationFunctionName.split('-').reverse();
+
+  try {
+    if (event.detail) {
+      const { logGroupName } = event.detail.requestParameters;
+
+      const result = await subscribeToLogGroup(logGroupName, destinationArn);
+
+      callback(null, result);
+    } else {
+      const cloudWatchLogs = new CloudWatchLogs();
+      const { logGroups } = await cloudWatchLogs.describeLogGroups({
+        logGroupNamePrefix: `/aws/lambda/${service.reverse().join('-')}-${stage}`,
+      }).promise();
+
+      await Promise.all(logGroups
+        .map(({ logGroupName }) => subscribeToLogGroup(logGroupName, destinationArn)));
+
+      callback(null, 'ok (massive)');
+    }
   } catch (error) {
     callback(error);
   }

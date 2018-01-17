@@ -51,6 +51,12 @@ provider:
       Action:
         - lambda:InvokeFunction
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - logs:DescribeLogGroups
+        - logs:DescribeSubscriptionFilters
+        - logs:PutSubscriptionFilter
+      Resource: "*"
   environment:
     TABLE_USERS: { "Ref": "TOPWSUsers" }
     TABLE_CONFIGURATION: { "Ref": "TOPWSConfig" }
@@ -139,8 +145,36 @@ functions:
 
   dispatchLogs:
     handler: lambda/logs.handle
-    events:
-      - cloudwatchLog: /aws/lambda/topws-serverless-dev-telegram-handleMessage
+    # events:
+    #   - cloudwatchLog: /aws/lambda/topws-serverless-${self:custom.stage}-*
+
+  subscribeToLogs:
+    handler: lambda/logs.subscribe
+    environment:
+      DEST_FUNC:
+        Fn::Join:
+          - ""
+          - - "arn:aws:lambda:"
+            - Ref: "AWS::Region"
+            - ":"
+            - Ref: "AWS::AccountId"
+            - ":function:"
+            - ${self:service}
+            - "-"
+            - ${self:custom.stage}
+            - "-dispatchLogs"
+    # events:
+    #   - cloudwatchEvent:
+    #       event:
+    #         source:
+    #           - aws.logs
+    #         detail-type:
+    #           - AWS API Call via CloudTrail
+    #         detail:
+    #           eventSource:
+    #             - logs.amazonaws.com
+    #           eventName:
+    #             - CreateLogGroup
 
 resources:
   Resources:
@@ -173,3 +207,25 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    LambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName:
+          Fn::Join:
+            - ""
+            - - "arn:aws:lambda:"
+              - Ref: "AWS::Region"
+              - ":"
+              - Ref: "AWS::AccountId"
+              - ":function:"
+              - ${self:service}
+              - "-"
+              - ${self:custom.stage}
+              - "-dispatchLogs"
+        Principal:
+          Fn::Join:
+            - ""
+            - - "logs."
+              - Ref: "AWS::Region"
+              - ".amazonaws.com"
