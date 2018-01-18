@@ -7,7 +7,7 @@
     "compile:static": "webpack --config config/webpack/static.js",
     "deploy": "npm run deploy:lambda && npm run deploy:static",
     "deploy:lambda": "serverless deploy",
-    "postdeploy:lambda": "serverless invoke --function subscribeToLogs",
+    "postdeploy:lambda": "serverless invoke --function subscribeToLogs && serverless invoke --function telegram-registerEndpoint --path endpoints.json",
     "predeploy:static": "npm run serverless -- exportEndpoints && npm run compile:static",
     "deploy:static": "serverless client deploy",
     "eslint": "eslint --ext js,vue .",

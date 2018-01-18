@@ -11,11 +11,11 @@ A simple serverless application to show what serverless (the AWS flavour) really
 ## TODO List
 
 - [x] Retrieve API endpoint and:
-  - [ ] Update telegram bot
+  - [x] Update telegram bot
   - [ ] Send via telegram
   - [x] Make lambda endpoint dynamic (for the static part)
 - [x] Make VueJS working again
-- [ ] Remove babel-preset-2015 -> babel-preset-env
+- [x] Remove babel-preset-2015 -> babel-preset-env
 - [ ] Test log dispatch
 - [x] Re-populate config table
 - [x] Add IOpipe
