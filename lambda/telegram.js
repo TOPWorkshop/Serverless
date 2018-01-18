@@ -46,8 +46,6 @@ export async function handleMessage(event, context, callback) {
     const expectedChatId = await Configuration.getValue(userIdKey);
     const chatId = body.message.chat.id;
 
-    console.log(chatId);
-
     callback(null, createSuccessMessage({}));
 
     if (expectedChatId !== `${chatId}`) {

@@ -135,7 +135,7 @@ async function handleLogEvent(logEvent) {
 
   if (telegramMessage) {
     const sns = new SNS();
-    const snsErrorTopicArn = process.env.SNS_ERRORS;
+    const snsErrorTopicArn = process.env.SNS_TELEGRAM;
 
     await sns.publish({
       Message: telegramMessage,
