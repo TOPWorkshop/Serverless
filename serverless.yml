@@ -209,7 +209,7 @@ resources:
           WriteCapacityUnits: 1
     LambdaInvokePermission:
       Type: AWS::Lambda::Permission
-      DependsOn: ${self:service}-${self:custom.stage}-dispatchLogs
+      DependsOn: subscribeToLogs
       Properties:
         Action: lambda:InvokeFunction
         FunctionName:
