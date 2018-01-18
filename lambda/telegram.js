@@ -87,5 +87,9 @@ export async function registerEndpoint(endpoints, context, callback) {
 
   await axios.post(`${await getTelegramUrl()}/setWebhook`, { url });
 
+  const myChatId = await Configuration.getValue(userIdKey);
+  const sampleUrl = endpoints['user-list'].GET;
+  await sendTelegramMessage(myChatId, `New endpoint: ${sampleUrl}`);
+
   callback();
 }
