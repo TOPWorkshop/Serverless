@@ -14,7 +14,7 @@ module.exports = {
   },
 
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [nodeExternals({ whitelist: ['iopipe'] })],
 
   module: {
     loaders: [{
