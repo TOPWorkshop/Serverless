@@ -82,12 +82,10 @@ export async function handleMessage(event, context, callback) {
   }
 }
 
-export async function registerEndpoint(event, context, callback) {
-  console.log(event);
+export async function registerEndpoint(endpoints, context, callback) {
+  const url = endpoints['telegram-handleMessage'].POST;
 
-  await axios.post(`${await getTelegramUrl()}/setWebhook`, {
-    url: 'https://n8avbibtf8.execute-api.eu-west-1.amazonaws.com/dev/telegram',
-  });
+  await axios.post(`${await getTelegramUrl()}/setWebhook`, { url });
 
   callback();
 }
