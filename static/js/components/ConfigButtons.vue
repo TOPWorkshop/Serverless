@@ -12,8 +12,6 @@
 <script>
   import axios from 'axios';
 
-  import config from '../config';
-
   export default {
     name: 'ConfigButtons',
 
@@ -25,7 +23,7 @@
 
     methods: {
       fetchConfig() {
-        axios.get(`${config.lambda.baseUrl}/${config.lambda.endpoints.config_get.replace('{configKey}', 'fbUserId')}`, {
+        axios.get(ENDPOINTS['config-get'].replace('{{configKey}}', 'fbUserId'), {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
           },

@@ -9,6 +9,21 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin'); // eslint-disa
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin'); // eslint-disable-line import/no-extraneous-dependencies
 
+const endpoints = require('../../endpoints');
+
+const ENDPOINTS = {};
+
+Object.keys(endpoints).forEach((endpoint) => {
+  const endpointObj = endpoints[endpoint];
+  const keys = Object.keys(endpointObj);
+
+  if (keys.length === 0) {
+    return;
+  }
+
+  ENDPOINTS[endpoint] = JSON.stringify(endpointObj[keys[0]]);
+});
+
 const rootDir = path.join(__dirname, '..', '..');
 
 const staticDir = path.join(rootDir, 'static');
@@ -114,6 +129,10 @@ module.exports = {
       filename: '../index.html',
       template: path.join(staticDir, 'index.html'),
     }),
+
+    new webpack.DefinePlugin({
+      ENDPOINTS,
+    }),
   ],
 
   devtool: `#${isProd ? '' : 'eval-'}source-map`,
@@ -122,12 +141,6 @@ module.exports = {
 if (isProd) {
   module.exports.plugins = [
     ...module.exports.plugins,
-
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"',
-      },
-    }),
 
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,

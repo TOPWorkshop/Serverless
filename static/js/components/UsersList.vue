@@ -13,8 +13,6 @@
 <script>
   import axios from 'axios';
 
-  import config from '../config';
-
   import User from './User';
 
   export default {
@@ -52,12 +50,12 @@
 
     methods: {
       fetchUsers() {
-        axios.get(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_list}`)
+        axios.get(ENDPOINTS['user-list'])
           .then(({ data: users }) => this.users = users);
       },
 
       voteUser(user) {
-        axios.put(`${config.lambda.baseUrl}/${config.lambda.endpoints.users_vote.replace('{userId}', user.userId)}`)
+        axios.put(ENDPOINTS['user-vote'].replace('{{userId}}', user.userId))
           .then(() => this.fetchUsers());
       },
     },

@@ -7,11 +7,17 @@ import log from './utils/log';
 
 const userIdKey = 'telegramUserId';
 
-async function sendTelegramMessage(chatId, text) {
+async function getTelegramUrl() {
+  const telegramUrl = 'https://api.telegram.org/bot{token}';
+
   const tokenKey = 'telegramBotToken';
   const token = await Configuration.getValue(tokenKey);
 
-  const { data } = axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+  return telegramUrl.replace('{token}', token);
+}
+
+async function sendTelegramMessage(chatId, text) {
+  const { data } = axios.post(`${await getTelegramUrl()}/sendMessage`, {
     chat_id: chatId,
     text,
     parse_mode: 'HTML',
@@ -39,6 +45,8 @@ export async function handleMessage(event, context, callback) {
   try {
     const expectedChatId = await Configuration.getValue(userIdKey);
     const chatId = body.message.chat.id;
+
+    console.log(chatId);
 
     callback(null, createSuccessMessage({}));
 
@@ -72,4 +80,14 @@ export async function handleMessage(event, context, callback) {
 
     callback(null, createSuccessMessage({}));
   }
+}
+
+export async function registerEndpoint(event, context, callback) {
+  console.log(event);
+
+  await axios.post(`${await getTelegramUrl()}/setWebhook`, {
+    url: 'https://n8avbibtf8.execute-api.eu-west-1.amazonaws.com/dev/telegram',
+  });
+
+  callback();
 }

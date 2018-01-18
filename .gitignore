@@ -5,6 +5,7 @@ static-dist
 ### Serverless Framework
 .serverless
 .webpack
+endpoints.json
 
 ### Node template
 # Logs

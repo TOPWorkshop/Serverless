@@ -3,6 +3,8 @@ service: topws-serverless
 plugins:
   - serverless-webpack
   - serverless-finch
+  - serverless-plugin-export-endpoints
+  - serverless-plugin-iopipe
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -21,6 +23,9 @@ custom:
       identityValidationExpression: Bearer (.*)
   sns:
     telegram: ${self:service}-telegram
+
+environment:
+  IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
 
 provider:
   name: aws
@@ -127,6 +132,9 @@ functions:
      - http:
         path: telegram
         method: post
+
+  telegram-registerEndpoint:
+    handler: lambda/telegram.registerEndpoint
 
   dispatchToTelegram:
     handler: lambda/telegram.forwardSNS
