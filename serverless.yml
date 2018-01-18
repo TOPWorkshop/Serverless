@@ -4,15 +4,12 @@ plugins:
   - serverless-webpack
   - serverless-finch
   - serverless-plugin-export-endpoints
-  - serverless-plugin-iopipe
 
 custom:
   stage: ${opt:stage, self:provider.stage}
   webpack: ./config/webpack/serverless.js
   webpackIncludeModules:
     packagePath: './package.json'
-    forceInclude:
-      - iopipe
   client:
     bucketName: ${self:service}-${self:custom.stage}-static
     distributionFolder: static-dist
@@ -25,9 +22,6 @@ custom:
       identityValidationExpression: Bearer (.*)
   sns:
     telegram: ${self:service}-telegram
-
-environment:
-  IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
 
 provider:
   name: aws

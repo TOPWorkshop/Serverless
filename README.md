@@ -18,6 +18,7 @@ A simple serverless application to show what serverless (the AWS flavour) really
 - [x] Remove babel-preset-2015 -> babel-preset-env
 - [ ] Test log dispatch
 - [x] Re-populate config table
-- [x] Add IOpipe
+- [ ] Add IOpipe
+  - [ ] Open issue to serverless-plugin-iopipe
 - [x] Add the CodeBuild badge
 - [ ] Logs from API Gateway
