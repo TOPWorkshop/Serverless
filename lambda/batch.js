@@ -32,6 +32,8 @@ export async function scrape(event, context, callback) {
         message = 'Facebook token expired! Please login again';
       }
 
+      log.error('scrape', message);
+
       callback(message);
 
       return;
