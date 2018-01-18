@@ -1,13 +1,17 @@
+import Configuration from './models/configuration';
 import User, { fields as userFields } from './models/users';
 import { getEventAttending } from './utils/facebook';
 import log from './utils/log';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function scrape(event, context, callback) {
-  const eventId = '1804514646517478';
+  const eventIdKey = 'fbEventId';
+  const eventId = await Configuration.getValue(eventIdKey);
 
   try {
     const users = await getEventAttending(eventId);
+
+    log.verbose('scrape', users);
 
     await Promise.all(users.map(user => User.update({
       [userFields.userId]: user.id,
