@@ -8,6 +8,21 @@ A simple serverless application to show what serverless (the AWS flavour) really
 
 ![Our architecture](docs/TOPWS-Serverless.png)
 
+## Deploy
+
+![Our deploy](docs/TOPWS-Serverless-Deploy.png)
+
+- npm run deploy
+  - npm run deploy:lambda
+    - serverless deploy
+    - serverless invoke --function subscribeToLogs
+    - serverless exportEndpoints
+    - serverless invoke --function telegram-registerEndpoint --path endpoints.json
+  - npm run deploy:static
+    - serverless exportEndpoints
+    - webpack --config config/webpack/static.js
+    - serverless client deploy
+
 ## TODO List
 
 - [x] Retrieve API endpoint and:
