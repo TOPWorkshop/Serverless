@@ -14,7 +14,9 @@ module.exports = {
   },
 
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [nodeExternals({
+    whitelist: ['iopipe'],
+  })],
 
   module: {
     loaders: [{
@@ -24,7 +26,14 @@ module.exports = {
       exclude: /node_modules|static/,
       options: {
         plugins: ['transform-runtime'],
-        presets: ['es2015', 'stage-0'],
+        presets: [
+          ['env', {
+            targets: {
+              node: '6.10',
+            },
+          }],
+          'stage-0',
+        ],
       },
     }],
   },

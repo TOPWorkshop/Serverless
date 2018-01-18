@@ -93,7 +93,14 @@ module.exports = {
       loader: 'babel-loader',
       options: {
         plugins: ['transform-runtime'],
-        presets: ['es2015', 'stage-0'],
+        presets: [
+          ['env', {
+            targets: {
+              browsers: ['last 2 versions', 'safari >= 7'],
+            },
+          }],
+          'stage-0',
+        ],
       },
     }, {
       test: /\.(woff|woff2|eot|ttf|svg|otf)$/,

@@ -17,7 +17,7 @@ A simple serverless application to show what serverless (the AWS flavour) really
 - [x] Make VueJS working again
 - [ ] Remove babel-preset-2015 -> babel-preset-env
 - [ ] Test log dispatch
-- [ ] Re-populate config table
+- [x] Re-populate config table
 - [x] Add IOpipe
 - [x] Add the CodeBuild badge
 - [ ] Logs from API Gateway
