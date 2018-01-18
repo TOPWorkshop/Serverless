@@ -10,7 +10,9 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   webpack: ./config/webpack/serverless.js
   webpackIncludeModules:
-      packagePath: './package.json'
+    packagePath: './package.json'
+    forceInclude:
+      - iopipe
   client:
     bucketName: ${self:service}-${self:custom.stage}-static
     distributionFolder: static-dist
