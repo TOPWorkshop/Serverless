@@ -21,8 +21,8 @@ async function getAccessToken() {
     },
   } = await axios.get(`${baseUrl}/oauth/access_token`, {
     params: {
-      clientId,
-      clientSecret,
+      client_id: clientId,
+      client_secret: clientSecret,
       grant_type: 'client_credentials',
     },
   });
